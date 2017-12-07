@@ -7,7 +7,7 @@
     <link rel="icon" href="public/favicon.ico" type="image/x-icon">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat" rel="stylesheet">
 
@@ -17,23 +17,34 @@
 <body>
 <div id="app">
     <div class="header">
-        <h1>Vue.js Poster APP</h1>
+        <h1>Vue.js IMGUR APP</h1>
     </div>
     <div class="main">
         <div class="products">
-            <p>Products go here.</p>
+            <p>Products</p>
+            <!-- Vue use (item in #) to call items in list 
+                v-for (for loop)-->
+            <div class="product wrapper" v-for="(item, index) in items">
+                <h4 class="product-title">{{ item.title }}</h4>
+                <button v-on:click="addItem(index)" class="btn add-to-cart">Add to cart</button>    
+            </div>
+
         </div>
         <div class="cart">
             <h2>Shopping Cart</h2>
             <div>
-                No items in the cart.
+                <div>Total: {{total}}</div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Scripts -->
+<!-- Live reload -->
 <script src="reload/reload.js"></script>
+<!-- Vue js -->
+<script src="node_modules/vue/dist/vue.js"></script>
+
 <script type="text/javascript" src="public/script.js"></script>
 
 </body>
