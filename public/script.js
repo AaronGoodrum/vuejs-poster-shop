@@ -1,5 +1,5 @@
 console.log('Server Started');
-var PRICE = 0;
+var PRICE = PRICE + 0;
 var cartTotal;
 	// create a new Vue instance plain property
 new Vue({
@@ -44,17 +44,24 @@ new Vue({
 		}, //End addItem
 		// update Item.quantity with ( inc , dec )
 		inc: function(item){
+			// ADD one item.qty
 			item.qty++;
-			console.log (PRICE);
-			this.total = (this.total + PRICE);
-			console.log (this.total);
+			this.total += (item.price);
+			PRICE = this.total;
+
 		},
 		dec: function(item){
+			//Remove ONE item.qty
 			item.qty--;
-			console.log (PRICE);
-			this.total = (this.total - PRICE);
-			console.log ('dec');
-		}
+			this.total -= (item.price);
+			console.log(item.qty);
+			// //Check if cart is zero
+			if (item.qty <= 0) {
+				//Remove 1 item from cart
+				this.cart.splice(item, 1)
+			}
+			PRICE = this.total;
+		} //End decItem
 	}, // End methods
 	filters: {
 		currency: function(price){
