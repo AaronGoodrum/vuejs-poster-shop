@@ -12,9 +12,9 @@ button:focus, input:focus {
 .btn {
     grid-column: 3;
     grid-row: 1;
-    background-color: #F08080;
+    background-color: #80ff80;
     border-radius: 2px;
-    color: white;
+    color: black;
     user-select: none;
     border: none;
     cursor: pointer;
