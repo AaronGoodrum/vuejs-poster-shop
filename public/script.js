@@ -1,5 +1,6 @@
 console.log('Server Started');
-var PRICE;
+var PRICE = 0;
+var cartTotal;
 	// create a new Vue instance plain property
 new Vue({
 	// Tell Vue where to be located/anchored in DOM (#id)
@@ -37,13 +38,21 @@ new Vue({
 				}); //End cart.push
 				PRICE = this.items[index].Price;
 			} //End If		
-			this.total = (this.total + PRICE);
+			this.total += (this.items[index].Price);
+			cartTotal = this.total;
 			console.log(PRICE);
 		}, //End addItem
+		// update Item.quantity with ( inc , dec )
 		inc: function(item){
-			console.log ('inc');
+			item.qty++;
+			console.log (PRICE);
+			this.total = (this.total + PRICE);
+			console.log (this.total);
 		},
 		dec: function(item){
+			item.qty--;
+			console.log (PRICE);
+			this.total = (this.total - PRICE);
 			console.log ('dec');
 		}
 	}, // End methods
