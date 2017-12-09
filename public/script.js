@@ -2,6 +2,7 @@ console.log('Server Started');
 var PRICE = PRICE + 0;
 var cartTotal;
 var LOAD_NUM = 10;
+
 	// create a new Vue instance plain property
 new Vue({
 	// Tell Vue where to be located/anchored in DOM (#id)
@@ -18,6 +19,13 @@ new Vue({
 			busy: false
 		},
 	methods: {
+		appendItems: function() {
+
+			if (this.items.length < this.results.length){
+				var append = this.results.slice(this.items.length, this.items.length + LOAD_NUM);
+				this.items = this.items.concat(append);
+			}
+		},
 		//Search button submit
 		onSubmit: function(){
 			this.items = [];
@@ -26,7 +34,7 @@ new Vue({
 				.get('/search/'.concat(this.newSearch))
 				.then(function(res){
 					this.results = res.data;
-					this.items = res.data.slice(0, LOAD_NUM);
+					this.appendItems();
 					this.lastSearch = this.newSearch;
 					this.loading = false;
 				}, response => {
@@ -63,45 +71,41 @@ new Vue({
 			this.total += (this.price);
 			cartTotal = this.total;
 		}, //End addItem
-		// update Item.quantity with ( inc , dec )
-		inc: function(item){
-			// ADD one item.qty
-			item.qty++;
-			this.total += (item.price);
-			PRICE = this.total;
+	// update Item.quantity with ( inc , dec )
+	inc: function(item){
+		// ADD one item.qty
+		item.qty++;
+		this.total += (item.price);
+		PRICE = this.total;
 
-		},
-		dec: function(item){
-			//Remove ONE item.qty
-			item.qty--;
-			this.total -= (item.price);
-			console.log(item.qty);
-			// //Check if cart is zero
-			if (item.qty <= 0) {
-				//Remove 1 item from cart
-				this.cart.splice(item, 1)
-			}
-			PRICE = this.total;
-		}, //End decItem
-		//Load more images
-		loadMore: function() {
-			this.busy = true;
-				setTimeout(() => {
-					for (var i = 0, j = 10; i < j; i++) {
-						this.results.push({ name: count++ });
-					}
-					this.busy = false;
-				}, 1000); //End loadMore
+	},
+	dec: function(item){
+		//Remove ONE item.qty
+		item.qty--;
+		this.total -= (item.price);
+		//Check if cart is zero
+		if (item.qty <= 0) {
+			//Remove 1 item from cart
+			this.cart.splice(item, 1)
 		}
-	}, // End methods
-	filters: {
-		currency: function(price){
-			return '$'.concat(price.toFixed(2));
-		}
-	}, //End Filters
+		PRICE = this.total;
+	}, //End decItem
+}, //End methods
+filters: {
+	currency: function(price){
+		return '$'.concat(price.toFixed(2));
+	}	
+}, //End Filters
 mounted: function(){
-		this.onSubmit();
-	}
+	this.onSubmit();
+
+	var vueSelf = this;
+	var elem = document.getElementById('product-list-bottom');
+	var watcher = scrollMonitor.create(elem);
+		watcher.enterViewport(function() {
+			vueSelf.appendItems();
+		});
+} //End Mounted
 
 }); // VUE END
 
