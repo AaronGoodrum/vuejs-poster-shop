@@ -10,9 +10,8 @@
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat" rel="stylesheet">
-    <!-- ajax -->
+    <!-- CSS --><!-- ajax -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="public/style.css">
 </head>
 <body>
@@ -21,39 +20,57 @@
         <h1>Vue.js IMGUR image APP</h1>
         <!-- Use .prevent stop page reload -->
         <form class="searchbar" v-on:submit.prevent="onSubmit">
-            <input id="search" v-model="search" placeholder=" Search for Image ">
+            <input id="search" v-model="newSearch" placeholder=" Search for Image ">
             <input id="submit" type="submit" value="Search" class="btn">
         </form>
     </div>
     <div class="main">
         <div class="products">
             <h2>Products</h2>
+            <div class="search-results" v-if="!loading">
+                <p>Found {{ items.length }} results for Search Term {{lastSearch}}.</p>
+            </div>
+            <div v-else>
+            <transition name="fade">
+                <p>Loading... <b>{{newSearch}}</b> ... results...</p>
+            </transition>
+            </div>
             <!-- Vue use (item in #) to call items in list 
                 v-for (for loop)-->
+        
             <div class="product wrapper" v-for="(item, index) in items">
-                <h4 class="product-title">{{ item.title }}</h4>
-                <button v-on:click="addItem(index)" class="btn add-to-cart">Add to cart</button>    
+            
+                <div>
+                    <div class="product-image">
+                        <img v-bind:src="item.link">
+                    </div>
+                    <h4 class="product-title">{{ item.title }}</h4>
+                    <p>Price: <strong>{{ price | currency }}</strong></p>
+                    <button v-on:click="addItem(index)" class="btn add-to-cart">Add to cart</button>
+                </div>
             </div>
-
         </div>
         <div class="cart">
             <h2>Shopping Cart</h2>
             <ul>
                 <li class="cart-item" v-for="item in cart">
                     <!-- vue.methods - addItem from cart.push -->
-                    <div class="item-title">{{item.title}}</div>
+                        <div class="item-title">{{item.title}}</div>                    
                      <!-- if buying same item will update quantity -->
                     <span class="item-qty">{{item.price | currency}} x {{item.qty}}</span>
                     <button class="btn" v-on:click="inc(item)">+</button><button class="btn" v-on:click="dec(item)">-</button>
                 </li>
             </ul>
+            
             <!-- Use v-if cart > 0.length show total - else show empty cart -->
             <div v-if="cart.length">
                 <!-- Vue.methods addItem.total -->
                 <div>Total: {{total  | currency}}</div>
             </div>
             <!-- v-else from v-if cart = 0.length (same sibling) -->
-            <div v-else class="empty-cart"><p>No items in cart</p></div>
+            <div v-else class="empty-cart">
+                <p>No items in cart</p>
+            </div>
         </div>
     </div>
 </div>

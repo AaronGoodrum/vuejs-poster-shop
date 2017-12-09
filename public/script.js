@@ -9,20 +9,27 @@ new Vue({
 			total: 0,
 			items:[],
 			cart: [],
-			search:'',
+			newSearch:'Poster',
+			lastSearch:'',
+			loading: false,
+			price: 9.99
 		},
 	methods: {
 		//Search button submit
 		onSubmit: function(){
-			var self = this.search;
-			console.log (self);
-			
+			this.items = [];
+			this.loading = true;
 			this.$http
-				.get(flickrAPI, flickrOptions, displayPhotos)
+				.get('/search/'.concat(this.newSearch))
 				.then(function(res){
-					console.log( res.media.m)
-					self.items = res.items.media.m;
-				}); //end .then
+					this.items = res.data;
+					this.lastSearch = this.newSearch;
+					this.loading = false;
+				}, response => {
+					// error callback
+					this.loading = false;
+					this.lastSearch = this.newSearch;
+				}); //End http
 			
 		}, //End onSubmit
 		// Add a product into the cart, if not found add one
@@ -34,7 +41,7 @@ new Vue({
 				if (this.cart[i].id === item.id) {
 					found = true;
 					this.cart[i].qty++;
-					PRICE += this.items[index].Price;
+					PRICE += this.items[index].price;
 					break;
 				} //End if
 			} //End for
@@ -45,13 +52,12 @@ new Vue({
 					id: item.id,
 					title: item.title,
 					qty: 1,
-					price: item.Price
+					price: 9.99
 				}); //End cart.push
-				PRICE = this.items[index].Price;
+				PRICE = this.price;
 			} //End If		
-			this.total += (this.items[index].Price);
+			this.total += (this.price);
 			cartTotal = this.total;
-			console.log(PRICE);
 		}, //End addItem
 		// update Item.quantity with ( inc , dec )
 		inc: function(item){
@@ -78,42 +84,13 @@ new Vue({
 		currency: function(price){
 			return '$'.concat(price.toFixed(2));
 		}
-	} //End Filters
+	}, //End Filters
+mounted: function(){
+		this.onSubmit();
+	}
+
 }); // VUE END
 
 $(document).ready(function() {
-//*******************************************************
-  //When the FORM Button is Click starts the function
-	$('form').submit(function(evt){
-		evt.preventDefault();
-
-		//Set animal from the search form text used from html
-				var flickrImage = $('#search').val();
-
-//getJSON form the API of flickr API with "?jsoncallback=?"
-		var flickrAPI = "https://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
-
-//Data to send to API as
-		var flickrOptions = {
-			//Query string parameters from flickr API content matching some criteria  (ID : option)
-			tags: flickrImage,
-			format: "json"
-		};
-
-
-		//Build the HTML from all the data from JSON
-			function displayPhotos(data) {
-				var photoHTML = '<ul>';
-				$.each(data.items, function(i, photo){
-					photoHTML += '<li class="grid-25 tablet-grid-50">';
-					photoHTML += '<a href="'+ photo.link +'" class="image">';
-					photoHTML += '<img src="'+ photo.media.m +'"></a></li>';
-				});
-				photoHTML += '</ul>';
-				$('#photos').html(photoHTML);
-			};//END displayPhotos
-
-		$.getJSON(flickrAPI, flickrOptions, displayPhotos);
-	});//end FORM
 
 });//End READY
