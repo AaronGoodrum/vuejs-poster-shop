@@ -7,15 +7,25 @@ new Vue({
 	el:'#app',
 		data: {
 			total: 0,
-			items:[
-				{id: 1, title: 'Item 10', Price: 10},
-				{id: 2, title: 'Item 9', Price: 9},
-				{id: 3, title: 'Item 4', Price: 4},
-				{id: 4, title: 'Item 6', Price: 6}
-			],
-			cart: []
+			items:[],
+			cart: [],
+			search:'',
 		},
 	methods: {
+		//Search button submit
+		onSubmit: function(){
+			var self = this.search;
+			console.log (self);
+			
+			this.$http
+				.get(flickrAPI, flickrOptions, displayPhotos)
+				.then(function(res){
+					console.log( res.media.m)
+					self.items = res.items.media.m;
+				}); //end .then
+			
+		}, //End onSubmit
+		// Add a product into the cart, if not found add one
 		addItem: function(index) {
 			var item = this.items[index];
 			var found = false;
@@ -25,6 +35,7 @@ new Vue({
 					found = true;
 					this.cart[i].qty++;
 					PRICE += this.items[index].Price;
+					break;
 				} //End if
 			} //End for
 			// Push title.item.index in to cart.array
@@ -69,3 +80,40 @@ new Vue({
 		}
 	} //End Filters
 }); // VUE END
+
+$(document).ready(function() {
+//*******************************************************
+  //When the FORM Button is Click starts the function
+	$('form').submit(function(evt){
+		evt.preventDefault();
+
+		//Set animal from the search form text used from html
+				var flickrImage = $('#search').val();
+
+//getJSON form the API of flickr API with "?jsoncallback=?"
+		var flickrAPI = "https://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+
+//Data to send to API as
+		var flickrOptions = {
+			//Query string parameters from flickr API content matching some criteria  (ID : option)
+			tags: flickrImage,
+			format: "json"
+		};
+
+
+		//Build the HTML from all the data from JSON
+			function displayPhotos(data) {
+				var photoHTML = '<ul>';
+				$.each(data.items, function(i, photo){
+					photoHTML += '<li class="grid-25 tablet-grid-50">';
+					photoHTML += '<a href="'+ photo.link +'" class="image">';
+					photoHTML += '<img src="'+ photo.media.m +'"></a></li>';
+				});
+				photoHTML += '</ul>';
+				$('#photos').html(photoHTML);
+			};//END displayPhotos
+
+		$.getJSON(flickrAPI, flickrOptions, displayPhotos);
+	});//end FORM
+
+});//End READY
