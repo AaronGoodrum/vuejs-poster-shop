@@ -1,6 +1,7 @@
 console.log('Server Started');
 var PRICE = PRICE + 0;
 var cartTotal;
+var LOAD_NUM = 10;
 	// create a new Vue instance plain property
 new Vue({
 	// Tell Vue where to be located/anchored in DOM (#id)
@@ -9,10 +10,12 @@ new Vue({
 			total: 0,
 			items:[],
 			cart: [],
+			results:[],
 			newSearch:'Poster',
 			lastSearch:'',
 			loading: false,
-			price: 9.99
+			price: 9.99,
+			busy: false
 		},
 	methods: {
 		//Search button submit
@@ -22,7 +25,8 @@ new Vue({
 			this.$http
 				.get('/search/'.concat(this.newSearch))
 				.then(function(res){
-					this.items = res.data;
+					this.results = res.data;
+					this.items = res.data.slice(0, LOAD_NUM);
 					this.lastSearch = this.newSearch;
 					this.loading = false;
 				}, response => {
@@ -78,7 +82,17 @@ new Vue({
 				this.cart.splice(item, 1)
 			}
 			PRICE = this.total;
-		} //End decItem
+		}, //End decItem
+		//Load more images
+		loadMore: function() {
+			this.busy = true;
+				setTimeout(() => {
+					for (var i = 0, j = 10; i < j; i++) {
+						this.results.push({ name: count++ });
+					}
+					this.busy = false;
+				}, 1000); //End loadMore
+		}
 	}, // End methods
 	filters: {
 		currency: function(price){
