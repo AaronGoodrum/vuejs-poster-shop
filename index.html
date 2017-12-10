@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="public/style.css">
 </head>
 <body>
-<div id="app">
+<div id="app" v-cloak>
     <div class="header">
         <h1>Vue.js IMGUR Poster APP</h1>
         <!-- Use .prevent stop page reload -->
@@ -75,7 +75,9 @@
                     <button v-on:click="addItem(index)" class="btn add-to-cart">Add to cart</button>
                 </div>
             </div> <!-- End product -->
-        <div id="product-list-bottom"></div>
+        <div id="product-list-bottom">
+            <div v-if="noMoreItems"> End of Images</div>
+        </div>
         </div> <!-- End Products  -->
     </div>
 </div>

@@ -18,6 +18,11 @@ new Vue({
 			price: 9.99,
 			busy: false
 		},
+	computed: {
+		noMoreItems: function(){
+			return this.items.length === this.results.length && this.results.length > 0;
+		},
+	},
 	methods: {
 		appendItems: function() {
 
@@ -28,6 +33,7 @@ new Vue({
 		},
 		//Search button submit
 		onSubmit: function(){
+			this.results = [];
 			this.items = [];
 			this.loading = true;
 			this.$http
