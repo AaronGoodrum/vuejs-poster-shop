@@ -37,7 +37,8 @@
                     <div class="item-title">{{item.title}}</div>                    
                     <!-- if buying same item will update quantity -->
                     <span class="item-qty">{{item.price | currency}} x {{item.qty}}</span>
-                    <button class="btn" v-on:click="inc(item)">+</button><button class="btn" v-on:click="dec(item)">-</button>
+                    <button class="btn" v-on:click="inc(item)">+</button>
+                    <button class="btn" v-on:click="dec(item)">-</button>
                 </li>
             </transition-group>
             
